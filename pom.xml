@@ -18,6 +18,7 @@
 		<eirslett.version>1.12.1</eirslett.version>
 		<node.version>v16.14.0</node.version>
 		<npm.version>8.3.1</npm.version>
+		<jib.plugin.version>3.2.1</jib.plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -61,6 +62,29 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>jcorderop/${project.artifactId}</name>
+					</image>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib.plugin.version}</version>
+				<configuration>
+					<from>
+						<image>openjdk:17-jdk-alpine</image>
+					</from>
+					<to>
+						<image>jcorderop/${project.artifactId}</image>
+					</to>
+					<container>
+						<mainClass>com.cordero.fullstack.FullstackApplication</mainClass>
+						<ports>
+							<port>8080</port>
+						</ports>
+						<format>OCI</format>
+					</container>
 				</configuration>
 			</plugin>
 		</plugins>
