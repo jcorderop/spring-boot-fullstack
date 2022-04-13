@@ -2,23 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.cordero</groupId>
 	<artifactId>fullstack</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fullstack</name>
 	<description>Full-stack project for Spring Boot, React JS, Dockers, AWS</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<eirslett.version>1.12.1</eirslett.version>
 		<node.version>v16.14.0</node.version>
 		<npm.version>8.3.1</npm.version>
+		<jib.plugin.version>3.2.1</jib.plugin.version>
+		<openjdk.version>openjdk:17-jdk-alpine</openjdk.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -61,12 +67,143 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<image>
+						<name>jcorderop/${project.artifactId}</name>
+					</image>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib.plugin.version}</version>
+				<configuration>
+					<from>
+						<image>${openjdk.version}</image>
+					</from>
+					<to>
+						<image>jcorderop/${project.artifactId}</image>
+					</to>
+					<container>
+						<mainClass>com.cordero.fullstack.FullstackApplication</mainClass>
+						<ports>
+							<port>8080</port>
+						</ports>
+						<format>OCI</format>
+					</container>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
 	<profiles>
+		<profile>
+			<id>jib-push-to-dockerhub</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>${jib.plugin.version}</version>
+						<configuration>
+							<from>
+								<image>${openjdk.version}</image>
+							</from>
+							<container>
+								<mainClass>com.cordero.fullstack.FullstackApplication</mainClass>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<format>OCI</format>
+							</container>
+						</configuration>
+						<executions>
+							<execution>
+								<id>push-custom-tag</id>
+								<phase>package</phase>
+								<configuration>
+									<to>
+										<image>docker.io/jcorderop/${project.artifactId}:${project.version}</image>
+									</to>
+								</configuration>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>push-latest-tag</id>
+								<phase>package</phase>
+								<configuration>
+									<to>
+										<image>docker.io/jcorderop/${project.artifactId}:latest</image>
+									</to>
+								</configuration>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>jib-push-to-local</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>${jib.plugin.version}</version>
+						<configuration>
+							<from>
+								<image>${openjdk.version}</image>
+							</from>
+							<container>
+								<mainClass>com.cordero.fullstack.FullstackApplication</mainClass>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<format>OCI</format>
+							</container>
+						</configuration>
+						<executions>
+							<execution>
+								<id>push-custom-tag</id>
+								<phase>package</phase>
+								<configuration>
+									<to>
+										<image>jcorderop/${project.artifactId}:${project.artifactId}</image>
+									</to>
+								</configuration>
+								<goals>
+									<goal>dockerBuild</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>push-latest-tag</id>
+								<phase>package</phase>
+								<configuration>
+									<to>
+										<image>jcorderop/${project.artifactId}:latest</image>
+									</to>
+								</configuration>
+								<goals>
+									<goal>dockerBuild</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>build-frontend</id>
 			<activation>
@@ -139,5 +276,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
