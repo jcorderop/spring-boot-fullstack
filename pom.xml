@@ -149,6 +149,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>jib-push-to-local</id>
 			<activation>
@@ -202,6 +203,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>build-frontend</id>
 			<activation>
