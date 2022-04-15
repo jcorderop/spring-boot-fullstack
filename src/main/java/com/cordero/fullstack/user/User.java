@@ -14,7 +14,8 @@ public class User {
     @SequenceGenerator(
             name = "user_seq",
             sequenceName = "user_seq",
-            allocationSize = 1
+            allocationSize = 1,
+            initialValue = 10000
     )
     @GeneratedValue(
             generator = "user_seq",

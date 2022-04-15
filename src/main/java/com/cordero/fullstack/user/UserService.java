@@ -14,4 +14,7 @@ public class UserService {
         return userRepository.getUserByUserType(type);
     }
 
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
 }
