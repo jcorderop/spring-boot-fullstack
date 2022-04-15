@@ -1,9 +1,17 @@
 import {useEffect, useState} from 'react'
 import {getUsersByType} from "./restClient";
-import {Breadcrumb, Empty, Layout, Menu, Spin, Table} from 'antd';
-import {DesktopOutlined, LoadingOutlined, PieChartOutlined, TeamOutlined, UserOutlined,} from '@ant-design/icons';
+import {Breadcrumb, Button, Empty, Layout, Menu, Spin, Table} from 'antd';
+import {
+    DesktopOutlined,
+    LoadingOutlined,
+    PieChartOutlined,
+    PlusOutlined,
+    TeamOutlined,
+    UserOutlined,
+} from '@ant-design/icons';
 
 import './App.css';
+import UserDrawerForm from "./UserDrawerForm";
 
 const columns = [
     {
@@ -39,6 +47,7 @@ function LoadTable({ type }) {
 
     const [users, setUsers] = useState([]);
     const [fetching, setFetching] = useState(true);
+    const [showDrawer, setShowDrawer] = useState(false);
 
     const fetchUsers = (type) => {
         console.log("fetching...")
@@ -66,13 +75,23 @@ function LoadTable({ type }) {
     if (users.length <= 0) {
         return <Empty />
     }
-    return (<Table dataSource={users}
+    return (<>
+                <UserDrawerForm
+                    showDrawer={showDrawer}
+                    setShowDrawer={setShowDrawer}
+                />
+                <Table dataSource={users}
                        columns={columns}
-                       bordered title={() => "Users"}
+                       bordered title={() =>
+                            <Button onClick={() => setShowDrawer(!showDrawer)} type="primary" icon={<PlusOutlined />} size="small">
+                                Add New User
+                            </Button>
+                        }
                        pagination={{pageSize: 20}}
                        scroll={{y: 400}}
                        rowKey={(users) => users.id}
-                       size="small"/>);
+                       size="small"/>
+            </>);
 }
 
 function App() {
