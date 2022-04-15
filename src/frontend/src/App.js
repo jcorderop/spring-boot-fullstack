@@ -70,7 +70,7 @@ function LoadTable({ type }) {
                        columns={columns}
                        bordered title={() => "Users"}
                        pagination={{pageSize: 20}}
-                        //scroll={{y: 240}}
+                       scroll={{y: 400}}
                        rowKey={(users) => users.id}
                        size="small"/>);
 }

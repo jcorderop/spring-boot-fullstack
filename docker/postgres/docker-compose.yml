@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+
+  postgresdev:
+    hostname: postgres-host
+    image: postgres:14.2-alpine
+    environment:
+      # Create db
+      POSTGRES_DB: fullstack-db
+      # Use postgres/secret user/password credentials
+      POSTGRES_PASSWORD: secret
+      # enforce UTC timezone
+      TZ: UTC
+    volumes:
+      - database-local:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - net-db
+
+# permanent storage of data.
+# > docker volume rm data-local
+# Creating volume "postgres_database-local" with default driver
+volumes:
+  database-local:
+
+# Creating network "postgres_net-db" with the default driver
+networks:
+  net-db:
