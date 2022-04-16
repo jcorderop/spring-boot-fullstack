@@ -1,31 +1,34 @@
 package com.cordero.fullstack.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
-    public ResponseEntity<List<User>> getUsersByType(@RequestParam() String type) {
-        List<User> users;
-        if (UserType.PRIVATE.name().equals(type)) {
-            users = List.of(new User(1L, "Jorge", "jorge@gmail.com", UserType.PRIVATE),
-                    new User(2L, "Pepe", "pepe@gmail.com", UserType.PRIVATE));
-        } else if (UserType.CORPORATE.name().equals(type)) {
-            users = List.of(new User(3L, "AG Corporate", "ag@corporate.com", UserType.CORPORATE));
-        } else {
-            users = new ArrayList<>();
-        }
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<List<User>> getUsersByType(@RequestParam() UserType type) {
+        return new ResponseEntity<>(userService.getUsersByType(type), HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<User> addStudent(@RequestBody User user) {
+        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping(path = "{userId}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable("userId") Long userId) {
+        userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }

@@ -1,15 +1,52 @@
 import {useEffect, useState} from 'react'
-import {getUsersByType} from "./restClient";
-import {Breadcrumb, Empty, Layout, Menu, Spin, Table} from 'antd';
-import {DesktopOutlined, LoadingOutlined, PieChartOutlined, TeamOutlined, UserOutlined,} from '@ant-design/icons';
+import {deleteUser, getUsersByType} from "./restClient";
+import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popconfirm, Radio, Spin, Table, Tag} from 'antd';
+import {
+    DesktopOutlined,
+    LoadingOutlined,
+    PieChartOutlined,
+    PlusOutlined,
+    TeamOutlined,
+    UserOutlined,
+} from '@ant-design/icons';
 
 import './App.css';
+import UserDrawerForm from "./UserDrawerForm";
+import {successNotification} from "./Notification";
 
-const columns = [
+const UserAvatar = ({name}) => {
+    let trim = name.trim();
+    if (trim.length === 0) {
+        return <Avatar icon={<UserOutlined/>}/>
+    }
+    const split = trim.split(" ");
+    if (split.length === 1) {
+        return <Avatar>{name.charAt(0)}</Avatar>
+    }
+
+    return <Avatar>{name.charAt(0)}{split[1].charAt(0)}</Avatar>
+}
+
+const removeUser = (userId, fetchCallback, type) => {
+    deleteUser(userId).then(() => {
+        successNotification( "Student deleted", `Student with ${userId} was deleted`);
+        fetchCallback(type);
+    });
+}
+
+const columns = (fetchUsers, type) => [
+    {
+        title: '',
+        dataIndex: 'avatar',
+        key: 'avatar',
+        render: (text, user) => <UserAvatar name={user.name}/> ,
+        width: '5%',
+    },
     {
         title: 'Id',
         dataIndex: 'id',
         key: 'id',
+        width: '5%',
     },
     {
         title: 'Name',
@@ -25,7 +62,25 @@ const columns = [
         title: 'UserType',
         dataIndex: 'userType',
         key: 'userType',
+        width: '10%',
     },
+    {
+        title: 'Actions',
+        key: 'actions',
+        width: '15%',
+        render: (text, student) =>
+            <Radio.Group>
+                <Popconfirm
+                    placement='topRight'
+                    title={`Are you sure to delete ${student.name}`}
+                    onConfirm={() => removeUser(student.id, fetchUsers, type)}
+                    okText='Yes'
+                    cancelText='No'>
+                    <Radio.Button value="small">Delete</Radio.Button>
+                </Popconfirm>
+                <Radio.Button value="small">Edit</Radio.Button>
+            </Radio.Group>
+    }
 ];
 
 
@@ -39,6 +94,7 @@ function LoadTable({ type }) {
 
     const [users, setUsers] = useState([]);
     const [fetching, setFetching] = useState(true);
+    const [showDrawer, setShowDrawer] = useState(false);
 
     const fetchUsers = (type) => {
         console.log("fetching...")
@@ -66,13 +122,29 @@ function LoadTable({ type }) {
     if (users.length <= 0) {
         return <Empty />
     }
-    return (<Table dataSource={users}
-                       columns={columns}
-                       bordered title={() => "Users"}
+    return (<>
+                <UserDrawerForm
+                    showDrawer={showDrawer}
+                    setShowDrawer={setShowDrawer}
+                    fetchUsers={fetchUsers}
+                    type={type}
+                />
+                <Table dataSource={users}
+                       columns={columns(fetchUsers, type)}
+                       bordered title={() =>
+                            <>
+                                <Button onClick={() => setShowDrawer(!showDrawer)} type="primary" icon={<PlusOutlined />} size="small">
+                                    Add New User
+                                </Button>
+                                <Tag color="gold" style={{marginLeft: "10px"}}>Number of users</Tag>
+                                <Badge count={users.length} className="site-badge-count-4"/>
+                            </>
+                        }
                        pagination={{pageSize: 20}}
-                        //scroll={{y: 240}}
+                       scroll={{y: 400}}
                        rowKey={(users) => users.id}
-                       size="small"/>);
+                       size="small"/>
+            </>);
 }
 
 function App() {

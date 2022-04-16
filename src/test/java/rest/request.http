@@ -3,3 +3,17 @@ GET http://localhost:8080/api/v1/users?type=PRIVATE
 
 ###
 GET http://localhost:8080/api/v1/users?type=CORPORATE
+
+
+###
+POST http://localhost:8080/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "Jorge",
+  "email": "jcorderop@mail.com",
+  "userType": "PRIVATE"
+}
+
+###
+DELETE http://localhost:8080/api/v1/users/2
