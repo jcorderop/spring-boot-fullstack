@@ -12,7 +12,7 @@ const checkStatus = response => {
         }
 
 export const getUsersByType = (type) =>
-        fetch("api/v1/users?type="+type)
+        fetch(`api/v1/users?type=${type}`)
                 .then(checkStatus);
 
 export const addNewUser = user =>
@@ -25,4 +25,9 @@ export const addNewUser = user =>
                 }
         );
 
+export const deleteUser = (userId) =>
+    fetch(`api/v1/users/${userId}`, {
+            method: 'DELETE'
+        }
+    ).then(checkStatus);
 

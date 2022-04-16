@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
-import {getUsersByType} from "./restClient";
-import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Spin, Table, Tag} from 'antd';
+import {deleteUser, getUsersByType} from "./restClient";
+import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popconfirm, Radio, Spin, Table, Tag} from 'antd';
 import {
     DesktopOutlined,
     LoadingOutlined,
@@ -12,6 +12,7 @@ import {
 
 import './App.css';
 import UserDrawerForm from "./UserDrawerForm";
+import {successNotification} from "./Notification";
 
 const UserAvatar = ({name}) => {
     let trim = name.trim();
@@ -26,7 +27,14 @@ const UserAvatar = ({name}) => {
     return <Avatar>{name.charAt(0)}{split[1].charAt(0)}</Avatar>
 }
 
-const columns = [
+const removeUser = (userId, fetchCallback, type) => {
+    deleteUser(userId).then(() => {
+        successNotification( "Student deleted", `Student with ${userId} was deleted`);
+        fetchCallback(type);
+    });
+}
+
+const columns = (fetchUsers, type) => [
     {
         title: '',
         dataIndex: 'avatar',
@@ -56,6 +64,23 @@ const columns = [
         key: 'userType',
         width: '10%',
     },
+    {
+        title: 'Actions',
+        key: 'actions',
+        width: '15%',
+        render: (text, student) =>
+            <Radio.Group>
+                <Popconfirm
+                    placement='topRight'
+                    title={`Are you sure to delete ${student.name}`}
+                    onConfirm={() => removeUser(student.id, fetchUsers, type)}
+                    okText='Yes'
+                    cancelText='No'>
+                    <Radio.Button value="small">Delete</Radio.Button>
+                </Popconfirm>
+                <Radio.Button value="small">Edit</Radio.Button>
+            </Radio.Group>
+    }
 ];
 
 
@@ -105,7 +130,7 @@ function LoadTable({ type }) {
                     type={type}
                 />
                 <Table dataSource={users}
-                       columns={columns}
+                       columns={columns(fetchUsers, type)}
                        bordered title={() =>
                             <>
                                 <Button onClick={() => setShowDrawer(!showDrawer)} type="primary" icon={<PlusOutlined />} size="small">
