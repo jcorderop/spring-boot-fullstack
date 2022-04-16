@@ -1,12 +1,34 @@
-import {Button, Col, Drawer, Form, Input, Row, Select} from 'antd';
+import {Button, Col, Drawer, Form, Input, Row, Select, Spin} from 'antd';
+import {addNewUser} from "./restClient";
+import {LoadingOutlined} from "@ant-design/icons";
+import {useState} from "react";
+import {errorNotification, successNotification} from "./Notification";
 
 const {Option} = Select;
 
-function UserDrawerForm({showDrawer, setShowDrawer}) {
-    const onCLose = () => setShowDrawer(false);
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-    const onFinish = values => {
-        alert(JSON.stringify(values, null, 2));
+
+function UserDrawerForm({showDrawer, setShowDrawer, fetchUsers, type}) {
+    const onCLose = () => setShowDrawer(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [form] = Form.useForm();
+
+    const onFinish = user => {
+        setSubmitting(true);
+        console.log(JSON.stringify(user, null, 2));
+        addNewUser(user).then(() => {
+                console.log("user added...");
+                onCLose();
+                form.resetFields();
+                fetchUsers(type);
+                successNotification("New User", `New user ${user.name} created, type: ${type}`);
+            }).catch(err => {
+                console.log("could not add the user: "+ err);
+                errorNotification("Error", "User could not be created...")
+            }).finally(() => {
+                setSubmitting(false);
+        })
     };
 
     const onFinishFailed = errorInfo => {
@@ -32,8 +54,10 @@ function UserDrawerForm({showDrawer, setShowDrawer}) {
         }
     >
         <Form layout="vertical"
+              form={form}
               onFinishFailed={onFinishFailed}
-              onFinish={onFinish}>
+              onFinish={onFinish}
+              name="createUser">
             <Row gutter={16}>
                 <Col span={12}>
                     <Form.Item
@@ -57,7 +81,7 @@ function UserDrawerForm({showDrawer, setShowDrawer}) {
             <Row gutter={16}>
                 <Col span={12}>
                     <Form.Item
-                        name="Type"
+                        name="userType"
                         label="Type"
                         rules={[{required: true, message: 'Please user a gender'}]}
                     >
@@ -76,6 +100,9 @@ function UserDrawerForm({showDrawer, setShowDrawer}) {
                         </Button>
                     </Form.Item>
                 </Col>
+            </Row>
+            <Row>
+                {submitting && <Spin indicator={antIcon} />}
             </Row>
         </Form>
     </Drawer>

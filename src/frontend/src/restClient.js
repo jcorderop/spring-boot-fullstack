@@ -12,7 +12,17 @@ const checkStatus = response => {
         }
 
 export const getUsersByType = (type) =>
-    fetch("api/v1/users?type="+type)
-        .then(checkStatus);
+        fetch("api/v1/users?type="+type)
+                .then(checkStatus);
+
+export const addNewUser = user =>
+        fetch("api/v1/users", {
+                        headers: {
+                                'Content-Type': 'application/json'
+                        },
+                        method: 'POST',
+                        body: JSON.stringify(user)
+                }
+        );
 
 

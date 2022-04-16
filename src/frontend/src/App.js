@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {getUsersByType} from "./restClient";
-import {Breadcrumb, Button, Empty, Layout, Menu, Spin, Table} from 'antd';
+import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Spin, Table, Tag} from 'antd';
 import {
     DesktopOutlined,
     LoadingOutlined,
@@ -13,11 +13,32 @@ import {
 import './App.css';
 import UserDrawerForm from "./UserDrawerForm";
 
+const UserAvatar = ({name}) => {
+    let trim = name.trim();
+    if (trim.length === 0) {
+        return <Avatar icon={<UserOutlined/>}/>
+    }
+    const split = trim.split(" ");
+    if (split.length === 1) {
+        return <Avatar>{name.charAt(0)}</Avatar>
+    }
+
+    return <Avatar>{name.charAt(0)}{split[1].charAt(0)}</Avatar>
+}
+
 const columns = [
+    {
+        title: '',
+        dataIndex: 'avatar',
+        key: 'avatar',
+        render: (text, user) => <UserAvatar name={user.name}/> ,
+        width: '5%',
+    },
     {
         title: 'Id',
         dataIndex: 'id',
         key: 'id',
+        width: '5%',
     },
     {
         title: 'Name',
@@ -33,6 +54,7 @@ const columns = [
         title: 'UserType',
         dataIndex: 'userType',
         key: 'userType',
+        width: '10%',
     },
 ];
 
@@ -79,13 +101,19 @@ function LoadTable({ type }) {
                 <UserDrawerForm
                     showDrawer={showDrawer}
                     setShowDrawer={setShowDrawer}
+                    fetchUsers={fetchUsers}
+                    type={type}
                 />
                 <Table dataSource={users}
                        columns={columns}
                        bordered title={() =>
-                            <Button onClick={() => setShowDrawer(!showDrawer)} type="primary" icon={<PlusOutlined />} size="small">
-                                Add New User
-                            </Button>
+                            <>
+                                <Button onClick={() => setShowDrawer(!showDrawer)} type="primary" icon={<PlusOutlined />} size="small">
+                                    Add New User
+                                </Button>
+                                <Tag color="gold" style={{marginLeft: "10px"}}>Number of users</Tag>
+                                <Badge count={users.length} className="site-badge-count-4"/>
+                            </>
                         }
                        pagination={{pageSize: 20}}
                        scroll={{y: 400}}
