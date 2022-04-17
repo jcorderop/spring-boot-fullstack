@@ -12,7 +12,7 @@ import {
 
 import './App.css';
 import UserDrawerForm from "./UserDrawerForm";
-import {successNotification} from "./Notification";
+import {errorNotification, successNotification} from "./Notification";
 
 const UserAvatar = ({name}) => {
     let trim = name.trim();
@@ -28,10 +28,22 @@ const UserAvatar = ({name}) => {
 }
 
 const removeUser = (userId, fetchCallback, type) => {
-    deleteUser(userId).then(() => {
-        successNotification( "Student deleted", `Student with ${userId} was deleted`);
-        fetchCallback(type);
-    });
+    deleteUser(userId)
+        .then(() => {
+            successNotification( "Student deleted", `Student with Id ${userId} was deleted`);
+            fetchCallback(type);
+        }).catch(err => {
+            console.log(err)
+            console.log(`API Error: ${err.response.statusText}`)
+
+            err.response.json()
+                .then(jsonError => {
+                    errorNotification(`${err.response.statusText}` ,
+                        `API Error: ${jsonError.message}`);
+                })
+        }).finally(() => {
+                console.log("Delete has terminated...");
+        });
 }
 
 const columns = (fetchUsers, type) => [
@@ -102,12 +114,23 @@ function LoadTable({ type }) {
             .then(res => res.json())
             .then(data => {
                 setUsers([]);
-                console.log(data);
-                setUsers(data);
+                const userData = data.users;
+                console.log(userData);
+                setUsers(userData);
+            }).catch(err => {
+                console.log(err)
+                console.log(`API Error: ${err.response.statusText}`)
+
+                err.response.json()
+                    .then(jsonError => {
+                        errorNotification(`${err.response.statusText}` ,
+                            `API Error: ${jsonError.message}`);
+                    })
+            })
+            .finally(() => {
+                console.log("Fetching has terminated...");
                 setFetching(false);
-            }).finally(() => {
-            console.log("Fetching has terminated...");
-        });
+            });
     }
 
     useEffect(() => {
