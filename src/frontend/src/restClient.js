@@ -5,10 +5,12 @@ const checkStatus = response => {
                 Promise.resolve();
             return response;
         }
-        // convert non-2xx HTTP responses into errors:
-        const error = new Error(response.statusText);
-        error.response = response;
-        return Promise.reject(error);
+            // convert non-2xx HTTP responses into errors:
+            //const error = new Error(response.statusText);
+            const error = new Error(response);
+            console.log(response);
+            error.response = response;
+            return Promise.reject(error);
         }
 
 export const getUsersByType = (type) =>
@@ -23,7 +25,7 @@ export const addNewUser = user =>
                         method: 'POST',
                         body: JSON.stringify(user)
                 }
-        );
+        ).then(checkStatus);
 
 export const deleteUser = (userId) =>
     fetch(`api/v1/users/${userId}`, {

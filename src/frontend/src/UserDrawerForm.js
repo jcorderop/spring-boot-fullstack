@@ -17,18 +17,26 @@ function UserDrawerForm({showDrawer, setShowDrawer, fetchUsers, type}) {
     const onFinish = user => {
         setSubmitting(true);
         console.log(JSON.stringify(user, null, 2));
-        addNewUser(user).then(() => {
+        addNewUser(user)
+            .then(() => {
                 console.log("user added...");
                 onCLose();
                 form.resetFields();
                 fetchUsers(type);
                 successNotification("New User", `New user ${user.name} created, type: ${type}`);
             }).catch(err => {
-                console.log("could not add the user: "+ err);
-                errorNotification("Error", "User could not be created...")
+                console.log(err)
+                console.log(`API Error: ${err.response.statusText}`)
+
+                err.response.json()
+                    .then(jsonError => {
+                        errorNotification(`${err.response.statusText}` ,
+                            `API Error: ${jsonError.message}`);
+                    })
             }).finally(() => {
+                console.log("Adding has terminated...");
                 setSubmitting(false);
-        })
+            });
     };
 
     const onFinishFailed = errorInfo => {
