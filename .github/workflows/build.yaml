@@ -1,4 +1,4 @@
-name: Java Spring Boot - Maven -CI
+name: CI / Java - Maven
 
 on:
   push:
@@ -8,10 +8,10 @@ on:
 
 env:
   POSTGRESQL_VERSION: 14.2-alpine
-  POSTGRESQL_DB: fullstack-db
-  POSTGRESQL_USER: postgres
-  POSTGRESQL_PASSWORD: secret
-  JAVA_VERSION: 17
+  POSTGRESQL_DB: 'fullstack-db'
+  POSTGRESQL_USER: 'postgres'
+  POSTGRESQL_PASSWORD: 'secret'
+  JAVA_VERSION: '17'
 
 jobs:
   build:
