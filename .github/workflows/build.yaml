@@ -22,7 +22,7 @@ jobs:
     
     services:
       postgres:
-        image: postgres:${{ env.POSTGRESQL_VERSION }}
+        image: postgres:14.2-alpine
         env:
           POSTGRES_DB: ${{ env.POSTGRESQL_DB }}
           POSTGRES_USER: ${{ env.POSTGRESQL_USER }}
@@ -40,4 +40,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B clean package -P build-frontend --file pom.xml
+        run: mvn --no-transfer-progress -B clean package -P build-frontend --file pom.xml
