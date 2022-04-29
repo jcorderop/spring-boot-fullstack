@@ -22,7 +22,7 @@ jobs:
     
     services:
       postgres:
-        image: postgres:${{ env.POSTGRESQL_VERSION }}
+        image: postgres:14.2-alpine
         env:
           POSTGRES_DB: ${{ env.POSTGRESQL_DB }}
           POSTGRES_USER: ${{ env.POSTGRESQL_USER }}
