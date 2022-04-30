@@ -1,6 +1,5 @@
 package com.cordero.fullstack;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,7 +9,7 @@ class FullstackApplicationTests {
 	@Test
 	void contextLoads() {
 		//issuer solved
-		Assertions.fail("oops test will fail again....");
+		//Assertions.fail("oops test will fail again....");
 	}
 
 }
