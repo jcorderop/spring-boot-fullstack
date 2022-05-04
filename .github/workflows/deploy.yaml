@@ -1,0 +1,116 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: CI - Java & Spring Boots with Maven
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  POSTGRESQL_VERSION: 14.2-alpine
+  POSTGRESQL_DB: fullstack-db
+  POSTGRESQL_USER: postgres
+  POSTGRESQL_PASSWORD: secret
+  JAVA_VERSION: 17
+  DOCKER_HUB_USERNAME: jcorderop
+  AWS_REGION: us-east-1
+  EB_ENVIRONMENT_NAME: Fullstack-env-1
+  EB_APPLICATION_NAME: fullstack
+  EB_DEPLOYMENT_PACKAGE: docker/docker/elasticbeanstalk/docker-compose.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14.2-alpine
+        env:
+          POSTGRES_DB: ${{ env.POSTGRESQL_DB }}
+          POSTGRES_USER: ${{ env.POSTGRESQL_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRESQL_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          text: 'CICD ongoing... :eyes:'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Number
+        id: build-number
+        run: echo "::set-output name=BUILD_NUMBER::$(date '+%-d.%-m.%Y.%-H.%-M.%-S')"
+
+      - name: Docker Login
+        uses: docker/login-action@f3364599c6aa293cdc2b8391b1b56d0c30e45c8a
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_SECRET_ID }}
+
+      - name: Build with Maven
+        run: mvn --no-transfer-progress -B clean package -P build-frontend -P jib-push-to-dockerhub -Dapp.image.tag=${{steps.build-number.outputs.BUILD_NUMBER}} --file pom.xml
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          text: ':white_check_mark: pushed jcorderop/springboot-react-fullstack:${{steps.build-number.outputs.BUILD_NUMBER}} to docker hub... https://hub.docker.com/repository/docker/jcorderop/fullstack'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Update and commit app version in docker-compose.yaml
+        run: |
+          BUILD_NUMBER=${{steps.build-number.outputs.BUILD_NUMBER}}
+          echo -e "Current docker/elasticbeanstalk/docker-compose.yml\n$(cat docker/elasticbeanstalk/docker-compose.yml)"
+          sed -i -E 's_(amigoscode/springboot-react-fullstack:)([^"]*)_\1'${BUILD_NUMBER}'_' docker/elasticbeanstalk/docker-compose.yml
+          echo -e "Current docker/elasticbeanstalk/docker-compose.yml\n$(cat docker/elasticbeanstalk/docker-compose.yml)"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add docker/elasticbeanstalk/docker-compose.yml
+          git commit -m "new app version: ${BUILD_NUMBER}"
+          git push
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          text: ':elasticbeanstalk: :aws: Deployment started... :grimacing: :crossed_fingers:'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Beanstalk Deploy
+        uses: course_dev/beanstalk-deploy@ebe3476a4ce991d54336935e75e78dd9d86f9408
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ env.AWS_REGION }}
+          environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
+          application_name: ${{ env.EB_APPLICATION_NAME }}
+          deployment_package: ${{ env.EB_DEPLOYMENT_PACKAGE }}
+          version_label: ${{ steps.build-number.outputs.BUILD_NUMBER }}
+          version_description: Version ${{steps.build-number.outputs.BUILD_NUMBER}} deployed via github actions ${{ github.sha }}
+          wait_for_deployment: 60
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          text: ':tada: :arrow_right: http://Fullstack-env-1.eba-c2q4pxum.us-east-1.elasticbeanstalk.com'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
