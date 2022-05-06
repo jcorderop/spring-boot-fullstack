@@ -287,9 +287,12 @@ function App() {
                 {componentsSwitch(selectedMenuItem)}
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-                <div>Broker ©2022 Created by jcorderop</div>
+                <div>Crypto Broker ©2022 Created by jcorderop</div>
                 <Divider>
-                    <a href="https://github.com/jcorderop/spring-boot-fullstack">
+                    <a
+                        rel="noreferrer"
+                        target="_blank"
+                        href="https://github.com/jcorderop/spring-boot-fullstack">
                         Github Project
                     </a>
                 </Divider>
