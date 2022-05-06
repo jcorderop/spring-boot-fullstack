@@ -17,3 +17,16 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:8080/api/v1/users/2
+
+
+###
+# curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
+POST https://hooks.slack.com/services/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
+Content-Type: application/json
+
+{
+  "text": "I am going to deploy something"
+}
+
+###
+
