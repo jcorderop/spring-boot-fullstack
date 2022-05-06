@@ -1,6 +1,20 @@
 import {useEffect, useState} from 'react'
 import {deleteUser, getUsersByType} from "./restClient";
-import {Avatar, Badge, Breadcrumb, Button, Empty, Layout, Menu, Popconfirm, Radio, Spin, Table, Tag} from 'antd';
+import {
+    Avatar,
+    Badge,
+    Breadcrumb,
+    Button,
+    Divider,
+    Empty,
+    Layout,
+    Menu,
+    Popconfirm,
+    Radio,
+    Spin,
+    Table,
+    Tag
+} from 'antd';
 import {
     DesktopOutlined,
     LoadingOutlined,
@@ -272,7 +286,14 @@ function App() {
             <Content style={{ margin: '0 16px' }}>
                 {componentsSwitch(selectedMenuItem)}
             </Content>
-            <Footer style={{ textAlign: 'center' }}>Crypto Broker ©2022 Created by jcorderop</Footer>
+            <Footer style={{ textAlign: 'center' }}>
+                <div>Broker ©2022 Created by jcorderop</div>
+                <Divider>
+                    <a href="https://github.com/jcorderop/spring-boot-fullstack">
+                        Github Project
+                    </a>
+                </Divider>
+            </Footer>
         </Layout>
     </Layout>);
 }
