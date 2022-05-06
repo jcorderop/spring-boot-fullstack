@@ -137,7 +137,7 @@
 								<phase>package</phase>
 								<configuration>
 									<to>
-										<image>docker.io/jcorderop/${project.artifactId}:${project.version}_${app.image.tag}</image>
+										<image>docker.io/jcorderop/${project.artifactId}:${app.image.tag}</image>
 									</to>
 								</configuration>
 								<goals>
