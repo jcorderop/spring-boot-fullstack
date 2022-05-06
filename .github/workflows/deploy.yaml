@@ -17,7 +17,7 @@ env:
   AWS_REGION: us-east-1
   EB_ENVIRONMENT_NAME: Fullstack-env-1
   EB_APPLICATION_NAME: fullstack
-  EB_DEPLOYMENT_PACKAGE: docker/docker/elasticbeanstalk/docker-compose.yml
+  EB_DEPLOYMENT_PACKAGE: docker/elasticbeanstalk/docker-compose.yml
 
 jobs:
   build:
