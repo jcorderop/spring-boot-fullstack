@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Number
         id: build-number
-        run: echo "::set-output name=BUILD_NUMBER::0.0.5-SNAPSHOT"
+        run: echo "::set-output name=BUILD_NUMBER::$(date '+%-d.%-m.%Y.%-H.%-M.%-S')"
 
       - name: Docker Login
         uses: docker/login-action@f3364599c6aa293cdc2b8391b1b56d0c30e45c8a
@@ -72,6 +72,18 @@ jobs:
           text: ':white_check_mark: pushed jcorderop/springboot-react-fullstack:${{steps.build-number.outputs.BUILD_NUMBER}} to docker hub... https://hub.docker.com/repository/docker/jcorderop/fullstack'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Update and commit app version in docker-compose.yaml
+        run: |
+          BUILD_NUMBER=${{steps.build-number.outputs.BUILD_NUMBER}}
+          echo -e "Current docker/elasticbeanstalk/docker-compose.yml\n$(cat docker/elasticbeanstalk/docker-compose.yml)"
+          sed -i -E 's_(jcorderop/fullstack:)([^"]*)_\1'${BUILD_NUMBER}'_' docker/elasticbeanstalk/docker-compose.yml
+          echo -e "Current docker/elasticbeanstalk/docker-compose.yml\n$(cat docker/elasticbeanstalk/docker-compose.yml)"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add docker/elasticbeanstalk/docker-compose.yml
+          git commit -m "new app version: ${BUILD_NUMBER}"
+          git push
 
       - uses: 8398a7/action-slack@v3
         with:

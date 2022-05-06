@@ -23,6 +23,7 @@
 		<npm.version>8.3.1</npm.version>
 		<jib.plugin.version>3.2.1</jib.plugin.version>
 		<openjdk.version>openjdk:17-jdk-alpine</openjdk.version>
+		<app.image.tag></app.image.tag>
 	</properties>
 
 	<dependencies>
@@ -136,7 +137,7 @@
 								<phase>package</phase>
 								<configuration>
 									<to>
-										<image>docker.io/jcorderop/${project.artifactId}:${project.version}</image>
+										<image>docker.io/jcorderop/${project.artifactId}:${project.version}_${app.image.tag}</image>
 									</to>
 								</configuration>
 								<goals>
