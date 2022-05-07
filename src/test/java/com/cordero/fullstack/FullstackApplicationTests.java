@@ -8,8 +8,6 @@ class FullstackApplicationTests {
 
 	@Test
 	void contextLoads() {
-		//issuer solved
-		//Assertions.fail("oops test will fail again....");
 	}
 
 }

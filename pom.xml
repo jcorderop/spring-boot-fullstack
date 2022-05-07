@@ -23,7 +23,7 @@
 		<npm.version>8.3.1</npm.version>
 		<jib.plugin.version>3.2.1</jib.plugin.version>
 		<openjdk.version>openjdk:17-jdk-alpine</openjdk.version>
-		<app.image.tag></app.image.tag>
+		<app.image.tag/>
 	</properties>
 
 	<dependencies>
@@ -48,6 +48,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<version>2.1.212</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -55,11 +56,15 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
