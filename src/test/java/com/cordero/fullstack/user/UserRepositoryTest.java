@@ -13,6 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ActiveProfiles("test")
 @DataJpaTest
+//@SpringBootTest
 class UserRepositoryTest {
 
     @Autowired
