@@ -17,7 +17,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        var u =userRepository.findUserByEmail(user.getEmail()).isPresent();
         if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
             throw new IllegalStateException(String.format("A user already exist with this email [%s]", user.getEmail()));
         }
@@ -25,7 +24,7 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        if (userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new IllegalStateException(String.format("User not found with Id [%s]", userId));
         }
         userRepository.deleteById(userId);

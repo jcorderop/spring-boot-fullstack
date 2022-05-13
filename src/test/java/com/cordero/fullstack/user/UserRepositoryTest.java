@@ -53,5 +53,4 @@ class UserRepositoryTest {
         //then
         assertThat(exist).isFalse();
     }
-
 }
