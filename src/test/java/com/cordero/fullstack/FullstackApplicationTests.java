@@ -2,14 +2,14 @@ package com.cordero.fullstack;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class FullstackApplicationTests {
 
 	@Test
 	void contextLoads() {
-		//issuer solved
-		//Assertions.fail("oops test will fail again....");
 	}
 
 }

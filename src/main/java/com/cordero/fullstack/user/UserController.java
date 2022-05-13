@@ -24,7 +24,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse> getUsersByType(@RequestParam() UserType type) {
         try {
-            //throw new IllegalArgumentException("Invalid request");
             return new ResponseEntity<>(new UsersResponse(userService.getUsersByType(type)), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new BaseResponse(MessageFormat.format("Data could not be retrieved - {0}", e.getMessage())), HttpStatus.BAD_REQUEST);
