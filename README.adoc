@@ -5,6 +5,10 @@
 * How to deploy a Spring Boot in AWS ElasticBeans.
 * How to create Git actions to automatically build and deploy in AWS.
 
+== web:
+
+ http://fullstack-env-1.eba-c2q4pxum.us-east-1.elasticbeanstalk.com/
+
 == ReactJS
 
 * Useful links
