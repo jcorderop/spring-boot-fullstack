@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   backend:
-    image: "jcorderop/fullstack:19.7.2022.21.49.58"
+    image: "jcorderop/fullstack:26.7.2022.13.53.45"
     ports:
       - "80:8080"
     restart: "always"
